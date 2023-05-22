@@ -91,6 +91,7 @@ class PhotoViewController : UIViewController,
     // MARK: - [URL Session Post 멀티 파트 사진 데이터 업로드]
     func requestPOST() {
         
+        // jsl URL 수정해야함!
         // MARK: [URL 지정 실시]
         let urlComponents = URLComponents(string: "http://34.121.35.61:8080/data/add")
         

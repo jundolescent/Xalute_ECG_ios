@@ -18,7 +18,7 @@ struct Response: Codable {
     let message : String
 }
 
-//jsl 고쳐야함
+//jsl 
 func requestGet(url: String, completionHandler:@escaping(Bool, Any) -> Void) {
     
     //let sendData = try! JSONSerialization.data(withJSONObject: param, options: [])
