@@ -26,13 +26,24 @@ class FhirClient {
     func send(resource: Resource, closure: @escaping (Bool) -> Void) {
         
         //jsl
+        
         print("Store ECG data to SQL storage")
         print("Add ECG data to Blockchain on GCP")
         let result = try? resource.asJSON()
         request("http://34.121.35.61:8080/data/add", "POST", result) { (success, data) in
-
+            print(success)
             print(data)
+            if success{
+                closure(true)
+            }
+            else{
+                closure(false)
+            }
+
         }
+        
+        
+        
         
         
         //original code
@@ -65,6 +76,12 @@ class FhirClient {
             return
         }
         
+        struct Response: Codable {
+            let dataId: Double
+
+        }
+         
+        
         var request = URLRequest(url: url)
         request.httpMethod = method
         request.httpBody = sendData
@@ -94,6 +111,7 @@ class FhirClient {
                 return
             }
             
+            
             guard let output = try? JSONDecoder().decode(Response.self, from: data) else {
                 //print("Request_sendData: ", sendData)
                 //print("Request_data: ", data)
@@ -101,8 +119,13 @@ class FhirClient {
                 print("Error: JSON Data Parsing failed")
                 return
             }
+             
+            if(output.dataId == "null"){
+                print("Error: 중복 dataID")
+                return
+            }
             
-            completionHandler(true, output.result)
+            completionHandler(true, output.dataId)
         }.resume()
             
     }

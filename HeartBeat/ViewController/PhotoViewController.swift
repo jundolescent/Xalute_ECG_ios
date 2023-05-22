@@ -93,7 +93,7 @@ class PhotoViewController : UIViewController,
         
         // jsl URL 수정해야함!
         // MARK: [URL 지정 실시]
-        let urlComponents = URLComponents(string: "http://34.121.35.61:8080/data/add")
+        let urlComponents = URLComponents(string: "http://34.121.35.61:8080/api/addNewImage")
         
         
         
@@ -105,6 +105,12 @@ class PhotoViewController : UIViewController,
         // MARK: [전송할 데이터 파라미터 정의 실시]
         var reqestParam : Dictionary<String, Any> = [String : Any]()
         reqestParam["idx"] = 201 // 일반 파라미터
+        //jsl for test
+        reqestParam["userName"] = "junseok"
+        reqestParam["birthDate"] = "19960310"
+        reqestParam["dataCreatedAt"] = "2023-05-10"
+        reqestParam["extenstion"] = "jpg"
+        
         reqestParam["\(file)"] = self.imageData! as NSData // 사진 파일
         
         
