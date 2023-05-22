@@ -83,7 +83,7 @@ class HeartViewController : UITableViewController {
         testButton.addTarget(self, action: #selector(SendEcgData(_:)), for: .touchUpInside)
         
         //For GetEcgData jsl
-        
+        /*
          let testButton2 = UIButton(type: .custom)
          testButton2.setTitle("사진 전송하기", for: .normal)
          testButton2.setTitleColor(UIColor.white, for: .normal)
@@ -96,7 +96,7 @@ class HeartViewController : UITableViewController {
          self.view.addSubview(testButton2)
          testButton2.frame = CGRect(x: 100, y: 450, width: 180, height: 40)
          testButton2.addTarget(self, action: #selector(SendPhoto(_:)), for: .touchUpInside)
-         
+         */
 
         //end of adding button.
          
