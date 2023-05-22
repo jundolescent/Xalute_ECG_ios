@@ -739,6 +739,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HeartBeat/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Xalute;
+				INFOPLIST_KEY_NSCameraUsageDescription = "";
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "Allow this app to record health data provided from your doctor or clinician.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Allow this app to share your Health data to doctors and clinicians.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Allow this app to write health data provided from your doctor or clinician.";
@@ -781,6 +782,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HeartBeat/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Xalute;
+				INFOPLIST_KEY_NSCameraUsageDescription = "";
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "Allow this app to record health data provided from your doctor or clinician.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Allow this app to share your Health data to doctors and clinicians.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Allow this app to write health data provided from your doctor or clinician.";

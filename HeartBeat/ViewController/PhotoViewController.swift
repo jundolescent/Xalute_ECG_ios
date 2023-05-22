@@ -9,6 +9,7 @@
 
 import UIKit
 import Photos
+import MobileCoreServices
 
 class PhotoViewController : UIViewController,
                             UICollectionViewDataSource,
@@ -19,11 +20,11 @@ class PhotoViewController : UIViewController,
     let photo = UIImagePickerController() // 앨범 이동을 위한 컨트롤러
     var imageData : NSData? = nil // 서버로 이미지 등록을 하기 위함
     
-    
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
        return 2
     }
-    
+
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as?
@@ -38,8 +39,7 @@ class PhotoViewController : UIViewController,
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //jsl
-        self.photo.delegate = self
+
       
     }
     
@@ -47,6 +47,8 @@ class PhotoViewController : UIViewController,
         super.viewDidAppear(animated)
           
     }
+    
+    
 
     
     @IBAction func addPhotoAssets(_ sender: Any) {
@@ -67,8 +69,8 @@ class PhotoViewController : UIViewController,
                 print("===============================")
                 print("")
                 // -----------------------------------------
-                // [사진 찍기 카메라 호출]
-                
+                //jsl
+                self.photo.delegate = self
                 self.photo.sourceType = .photoLibrary // 앨범 지정 실시
                 self.photo.allowsEditing = false // 편집을 허용하지 않음
                 self.present(self.photo, animated: false, completion: nil)
@@ -79,6 +81,31 @@ class PhotoViewController : UIViewController,
         }
         
         alert.addAction(libraryAction)
+        
+        let cameraAction = UIAlertAction(title: "Camera", style: .default) { _ in
+           /*
+            let vc = self.storyboard!.instantiateViewController(withIdentifier: "SelectAnAlbum")
+            self.present(vc, animated: true, completion: nil)
+            */
+            DispatchQueue.main.async {
+                print("")
+                print("===============================")
+                print("[A_Image >> takePhoto() :: 사진 촬영 실시]")
+                print("===============================")
+                print("")
+                // -----------------------------------------
+                // [사진 찍기 카메라 호출]
+                //jsl
+                self.photo.delegate = self
+                self.photo.sourceType = .camera // 앨범 지정 실시
+                self.photo.allowsEditing = false // 편집을 허용하지 않음
+                self.present(self.photo, animated: false, completion: nil)
+                // -----------------------------------------
+            }
+            
+            
+        }
+        alert.addAction(cameraAction)
         
         let internetAction = UIAlertAction(title: "Internet", style: .default) { _ in
           //self.downloadImageAssets()
@@ -101,18 +128,18 @@ class PhotoViewController : UIViewController,
         let file = "file"
         
         
-        
         // MARK: [전송할 데이터 파라미터 정의 실시]
         var reqestParam : Dictionary<String, Any> = [String : Any]()
-        reqestParam["idx"] = 201 // 일반 파라미터
+        //reqestParam["idx"] = 201 // 일반 파라미터
         //jsl for test
         reqestParam["userName"] = "junseok"
         reqestParam["birthDate"] = "19960310"
         reqestParam["dataCreatedAt"] = "2023-05-10"
         reqestParam["extenstion"] = "jpg"
         
-        reqestParam["\(file)"] = self.imageData! as NSData // 사진 파일
-        
+        let imageBase64String = imageData?.base64EncodedString()
+        //reqestParam["\(file)"] = self.imageData! as NSData // 사진 파일
+        reqestParam["\(file)"] = imageBase64String!
         
         
         // [boundary 설정 : 바운더리 라인 구분 필요 위함]
@@ -155,7 +182,8 @@ class PhotoViewController : UIViewController,
                 uploadData.append(boundaryPrefix.data(using: .utf8)!)
                 uploadData.append("Content-Disposition: form-data; name=\"\(file)\"; filename=\"\(file)\"\r\n".data(using: .utf8)!) // [파라미터 key 지정]
                 uploadData.append("Content-Type: \("image/jpg")\r\n\r\n".data(using: .utf8)!) // [전체 이미지 타입 설정]
-                uploadData.append(value as! Data) // [사진 파일 삽입]
+                //uploadData.append(value as! Data) // [사진 파일 삽입]
+                uploadData.append("\(value)\r\n".data(using: .utf8)!) // [value 삽입]
                 uploadData.append("\r\n".data(using: .utf8)!)
                 uploadData.append("--\(boundary)--".data(using: .utf8)!)
             }
@@ -269,6 +297,7 @@ class PhotoViewController : UIViewController,
             }
         }.resume()
     }
+    
 
     
 }
