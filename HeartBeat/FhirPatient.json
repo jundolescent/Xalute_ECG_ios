@@ -1,0 +1,70 @@
+{
+        "resourceType" : "Patient",
+        "id" : "oslab",
+        "meta" : {
+            "profile" : [
+                "https://example.org/fhir/krcore/StructureDefinition/krcore-patient"
+            ]
+        },
+        "text" : {
+            "status" : "generated",
+            "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">\n      <p>KR Core Patient Profile Example</p>\n    </div>"
+        },
+        "identifier" : [
+            {
+                "type" : {
+                    "coding" : [
+                        {
+                            "system" : "",
+                            "code" : "MR"
+                        }
+                    ]
+                },
+                "system" : "urn:oid:",
+                "value" : "MR12345"
+            }
+        ],
+        "name" : [
+            {
+                "text" : "김환자"
+            }
+        ],
+        "telecom" : [
+            {
+                "system" : "phone",
+                "value" : "010-1234-5678"
+            }
+        ],
+        "gender" : "female",
+        "birthDate" : "2001-01-01",
+        "address" : [
+            {
+                "extension" : [
+                    {
+                        "url" : "https://example.org/",
+                        "extension" : [
+                            {
+                                "url" : "district",
+                                "valueString" : "data"
+                            },
+                            {
+                                "url" : "roadName",
+                                "valueString" : "data"
+                            },
+                            {
+                                "url" : "detailedAddress",
+                                "valueString" : "data"
+                            },
+                            {
+                                "url" : "complements",
+                                "valueString" : "data"
+                            }
+                        ]
+                    }
+                ],
+                "text" : "서울특별시 강남구 일원로 81 (일원동)",
+                "postalCode" : "06351"
+            }
+        ]
+    }
+}

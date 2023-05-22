@@ -1,0 +1,45 @@
+{
+
+        "resourceType" : "Observation",
+        "id" : "oslab",
+        "meta" : {
+            "profile" : [
+                "https://example.org/fhir/krcore/StructureDefinition/krcore-heartrate"
+            ]
+        },
+        "text" : {
+            "status" : "generated",
+            "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">\n      <p>\n        <b>Generated</b>\n      </p>\n    </div>"
+        },
+        "status" : "final",
+        "category" : [
+            {
+                "coding" : [
+                    {
+                        "system" : "http://terminology.hl7.org/CodeSystem/observation-category",
+                        "code" : "vital-signs",
+                        "display" : "Vital Signs"
+                    }
+                ]
+            }
+        ],
+        "code" : {
+            "coding" : [
+                {
+                    "system" : "http://loinc.org",
+                    "code" : "",
+                    "display" : "Heart Rate"
+                }
+            ]
+        },
+        "subject" : {
+            "reference" : "Patient/"
+        },
+        "effectiveDateTime" : "2021-01-01",
+        "valueQuantity" : {
+            "value" : 108.0,
+            "unit" : "beats/min",
+            "system" : "http://unitsofmeasure.org",
+            "code" : "/min"
+        }
+}

@@ -1,0 +1,59 @@
+{
+  "pins" : [
+    {
+      "identity" : "carekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/carekit-apple/CareKit",
+      "state" : {
+        "branch" : "master",
+        "revision" : "69f1bbd72203c696fe9508e368d499f66faefe29"
+      }
+    },
+    {
+      "identity" : "csv.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/yaslab/CSV.swift",
+      "state" : {
+        "branch" : "master",
+        "revision" : "81d2874c51db364d7e1d71b0d99018a294c87ac1"
+      }
+    },
+    {
+      "identity" : "fhirmodels",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/FHIRModels",
+      "state" : {
+        "revision" : "e115442fb3c5d44ffb1dc9b4e039b77fd143ad96",
+        "version" : "0.4.0"
+      }
+    },
+    {
+      "identity" : "oauth2",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/p2/OAuth2.git",
+      "state" : {
+        "revision" : "e4deb6cf83c9f43a74cd2deb757af0a381af9635",
+        "version" : "5.1.0"
+      }
+    },
+    {
+      "identity" : "swift-fhir",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/smart-on-fhir/Swift-FHIR",
+      "state" : {
+        "revision" : "b68fb5d6c8137de4a06894e683dc1a726a832907",
+        "version" : "4.2.1"
+      }
+    },
+    {
+      "identity" : "swift-smart",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/smart-on-fhir/Swift-SMART",
+      "state" : {
+        "branch" : "master",
+        "revision" : "f5d283079e2e5cd12bd0076f05886d19bbd5e125"
+      }
+    }
+  ],
+  "version" : 2
+}

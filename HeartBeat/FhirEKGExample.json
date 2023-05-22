@@ -1,0 +1,110 @@
+{
+  "resourceType": "Observation",
+  "id": "mjkim515",
+  "text": {
+    "status": "generated",
+  },
+  "status": "final",
+  "category": [
+    {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "procedure",
+          "display": "Procedure"
+        }
+      ]
+    }
+  ],
+  "code": {
+    "coding": [
+      {
+        "system": "urn:oid:2.16.840.1.113883.6.24",
+        "code": "131328",
+        "display": "MDC_ECG_ELEC_POTL"
+      }
+    ]
+  },
+  "subject": {
+    "reference": "Patient/f001",
+    "display": "P. van de Heuvel"
+  },
+  "effectiveDateTime": "2015-02-19T09:30:35+01:00",
+  "performer": [
+    {
+      "reference": "Practitioner/f005",
+      "display": "A. Langeveld"
+    }
+  ],
+  "device": {
+    "display": "12 lead EKG Device Metric"
+  },
+  "component": [
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "urn:oid:2.16.840.1.113883.6.24",
+            "code": "131329",
+            "display": "MDC_ECG_ELEC_POTL_I"
+          }
+        ]
+      },
+      "valueSampledData": {
+        "origin": {
+          "value": 2048
+        },
+        "period": 10,
+        "factor": 1.612,
+        "lowerLimit": -3300,
+        "upperLimit": 3300,
+        "dimensions": 1,
+        "data": "data"
+      }
+    },
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "urn:oid:2.16.840.1.113883.6.24",
+            "code": "131330",
+            "display": "MDC_ECG_ELEC_POTL_II"
+          }
+        ]
+      },
+      "valueSampledData": {
+        "origin": {
+          "value": 2048
+        },
+        "period": 10,
+        "factor": 1.612,
+        "lowerLimit": -3300,
+        "upperLimit": 3300,
+        "dimensions": 1,
+        "data": "data"
+      }
+    },
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "urn:oid:2.16.840.1.113883.6.24",
+            "code": "131389",
+            "display": "MDC_ECG_ELEC_POTL_III"
+          }
+        ]
+      },
+      "valueSampledData": {
+        "origin": {
+          "value": 2048
+        },
+        "period": 10,
+        "factor": 1.612,
+        "lowerLimit": -3300,
+        "upperLimit": 3300,
+        "dimensions": 1,
+        "data": "data"
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  'version': 0,
+  'use-external-names': 'false',
+  'case-sensitive': 'false',
+  'roots': [{
+    'type': 'directory',
+    'name': "/Users/mjkim/Desktop/work/DigitalHealthSystem/HeartBeat/build/Debug-iphonesimulator/Charts/Charts.framework/Modules"
+    'contents': [{
+      'type': 'file',
+      'name': "module.modulemap",
+      'external-contents': "/Users/mjkim/Desktop/work/DigitalHealthSystem/HeartBeat/build/Pods.build/Debug-iphonesimulator/Charts.build/unextended-module.modulemap",
+    }]
+  }]
+}
