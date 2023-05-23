@@ -14,32 +14,44 @@ import MobileCoreServices
 class PhotoViewController : UIViewController,
                             UICollectionViewDataSource,
                             UICollectionViewDelegate {
+    
     //jsl
     // MARK: - [전역 변수 선언 실시]
     @IBOutlet weak var imageView: UIImageView! // 이미지 뷰
     let photo = UIImagePickerController() // 앨범 이동을 위한 컨트롤러
     var imageData : NSData? = nil // 서버로 이미지 등록을 하기 위함
     
-
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
        return 2
     }
 
     
+     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as?
+                 UICollectionViewCell else {
+                return UICollectionViewCell()
+            }
+         
+            return cell
+     }
+     
+    /*
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as?
-                UICollectionViewCell else {
-               return UICollectionViewCell()
-           }
-           
-           return cell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CustomCollectionCell.identifier, for: indexPath) as! CustomCollectionCell
+
+        //cell.imageView.image = UIImage(named: imageData.self)
+        return cell
     }
-    
+     */
+     
+
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.photo.delegate = self
+        
       
     }
     
@@ -70,9 +82,9 @@ class PhotoViewController : UIViewController,
                 print("")
                 // -----------------------------------------
                 //jsl
-                self.photo.delegate = self
+
                 self.photo.sourceType = .photoLibrary // 앨범 지정 실시
-                self.photo.allowsEditing = false // 편집을 허용하지 않음
+                self.photo.allowsEditing = false // 편집을 허용하면 .edited를 저장할 수 있음 -> imageview 저장위해서
                 self.present(self.photo, animated: false, completion: nil)
                 // -----------------------------------------
             }
@@ -96,9 +108,9 @@ class PhotoViewController : UIViewController,
                 // -----------------------------------------
                 // [사진 찍기 카메라 호출]
                 //jsl
-                self.photo.delegate = self
+
                 self.photo.sourceType = .camera // 앨범 지정 실시
-                self.photo.allowsEditing = false // 편집을 허용하지 않음
+                self.photo.allowsEditing = false // 편집을 허용x
                 self.present(self.photo, animated: false, completion: nil)
                 // -----------------------------------------
             }
@@ -113,6 +125,90 @@ class PhotoViewController : UIViewController,
         alert.addAction(internetAction)
         
         present(alert, animated: true, completion: nil)
+    }
+    
+    func requestPOST2(){
+        // MARK: [URL 지정 실시]
+        let urlComponents = URLComponents(string: "http://34.121.35.61:8080/api/addNewImage")
+        let imageBase64String = imageData?.base64EncodedString()
+        
+        
+        struct Request: Codable {
+            let userName: String
+            let birthDate: String
+            let dataCreatedAt: String
+            let `extension`: String
+            let image: String
+
+        }
+        
+        struct Response: Codable {
+            let result: String
+        }
+        
+        let userName = UserDefaultsProvider.getValueFromUserDefaults(key: "userName") ?? ""
+        let birthDate = UserDefaultsProvider.getValueFromUserDefaults(key: "birthDate") ?? ""
+        
+        // To-Do List
+        // let dataCreatedAt -> 사진이 언제 생성되었는지 확인해야함
+        // let 'extension' -> 사진의 형식을 알아내야함
+        
+        
+        print(userName)
+        print(birthDate)
+        
+        
+        
+        let data = [
+            "userName": "test09",
+            "birthDate": "1996-03-11",
+            "dataCreatedAt": "2022-01-01T00:00:00",
+            "extension": "jpg",
+            "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAIIAggMBIgACEQEDEQH/xAAbAAEBAQEBAQEBAAAAAAAAAAAAAQYCBQMHBP/EAEEQAAIBAwICBAcOBAcAAAAAAAABAgMEEQUGITEHEkFREyJhcYGSoRQVFzI2UlZzkZPBwtHiM0JysSM0RHSCorL/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A/YSN9wbCXawKAAABM4YFBMcSgACN4ANhcvKRceJ0AAAAE7SgUAAQAAAAAAPM1zXdP0KjTqahVlHwjahGEetKWOfoXAD0wZH4RdA+dc/dr9R8IugfOuful+oGuD4mRfSJoC/muful+o+EXQPnXP3S/UDXAzWnb50PULuna0q1WnUqSUYOpTwnJ8llZNKAAAAAAUAAQAjTWAKAABi95JS3dthSSadZ5T/rgbQxm8It7u2y0uCqtt93jwA1tSjRjTlKNtTk0m1FQWX5DPVdYvKeh0b+O2KkrmdXqStccYrj4z8XOOHcaZc8l/ADF2u49SrXNGlU2fVhGc1GUuPipvi+MFy85sHb0M/waXqI+mfKAMT0h06dOroTp04RzerPVil2xNs+bMf0hwbnocurlK9XbxXFGwfNgAAAAOeYHYAAjCyAAAAAxm7ptbt2yuyVbD9eBszF7x+V+1/rn/7gBrL+9ttOtKl3eVFTo01mUvwS7WY+nre59xOU9AtKVlZJtRuLnnLy9vsT85d2Rlrm7NM0BykrWnHw9dReOtz/AAWP+R9d+XV9YS0W20a4dpKpUlCEabUYtrqKKfZjjy5AcTob80/NeN1aX6jxdLCy/ZH2M9bbW5qOtudtWoytNQpZ8Jbzfd2xzj7Ow83T951LS4Vhuq0lY3S4KuovqT8uO7yrK8x8d+UYWvuDdGmSi69GpFTqU2mqsHy4rn83zSA+3SDVlSnonUeHK8UW+3GY5Ni+bMT0gVY147erU/i1LuM15n1WbZ82AAAEayygAUAAQAjAoAAGL3j8r9r/AF354G0MZvD5X7Y+tb/7wA51WotM6R9Pu6/i0Ly38Cpvkpcv79T7TjpLqytrnQa6g5ulcSmoL+ZpwaXsNFuXQqGv6c7aq+pVi+tRq4+JLy96fajNUNxaxt5Rtdy6bVuadJ/4d3Rw847cvg358PvALRNd3ZUhcbhquxsoy61O1pLE/secPyvL8iPpvyNtpu2bTRLGGJV6sYUaSeXhPPp8Zpek7q9INtWXg9K0y9urh8IxcEln0ZZ9dA0DULzVVr25WvdUf8vbLGKXc2lyxngvS+IH8u+aHua221b5z4G4hT+xRX4G5fNmN6RU3V0LC/1q/KbJ88gAAAAGQKAAOW8ESzxLgoAAADH7rlFbv2314ycXVaWPndeGDYGM3g2t37Yw+HhvzwA2aWGOzAPM3Baapd2kIaPfQs6ynmU5xypRw+HJ47APSjFR+LFLzIreEZG20fd8LmlOvuGhKlGac49TPWWeK+Ka5oDHdIFTqVNFwuMrxRz3cYmxfNmM6Rv4mhf71f3ibN82AAAE7SsACgACAAAAABn91beraxUsrqxu1bXtnJunOUcrjh+xpGgAGN95N4/SSl6n7QtE3j9I6XqftNkAMb7ybx7NyU8/0ftHvJvH6SUvU/abIAYuG1Navb60qa7rMLm3tqqqxhGHFtccclzwjaAAAAAAAFAAEJxKMgAAAAOeL8wFT4lAAAACce4qCAAAACc3lkw2zpAUAACFAAAACIoAAAAAAIUAAAAIUAAAAP/Z"
+        ]
+        
+        let sendData = try! JSONSerialization.data(withJSONObject: data, options: [])
+        
+        var requestURL = URLRequest(url: (urlComponents?.url)!) // url 주소 지정
+        requestURL.httpMethod = "POST" // POST 방식 multipart/form-data
+        requestURL.httpBody = sendData
+        //requestURL.addValue("text/plain;charset=UTF-8", forHTTPHeaderField: "Content-Type")
+        requestURL.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        URLSession.shared.dataTask(with: requestURL) { (data, response, error) in
+            
+            guard error == nil else {
+                print("Error: error calling POST")
+                print(error!)
+                return
+            }
+            guard let data = data else {
+                print("Error: Did not receive data")
+                return
+            }
+
+            // Failed to upload image일 경우 이미지가 업로드되지 않은 것임
+            print(String(data: data, encoding: .utf8)!)
+            
+            guard let response = response as? HTTPURLResponse, (200 ..< 300) ~= response.statusCode else {
+                print("Error: HTTP request failed")
+                return
+            }
+            
+            /*
+            guard let output = try? JSONDecoder().decode(Response.self, from: data) else {
+                //print("Request_sendData: ", sendData)
+                //print("Request_data: ", data)
+                //print("Request_output: ", output)
+                print("Error: JSON Data Parsing failed")
+                return
+            }
+            */
+             
+             
+
+        }.resume()
+        
     }
     
     // MARK: - [URL Session Post 멀티 파트 사진 데이터 업로드]
@@ -139,7 +235,10 @@ class PhotoViewController : UIViewController,
         
         let imageBase64String = imageData?.base64EncodedString()
         //reqestParam["\(file)"] = self.imageData! as NSData // 사진 파일
-        reqestParam["\(file)"] = imageBase64String!
+        //reqestParam["\(file)"] = imageBase64String
+        
+        //jsl -> 0523 수정
+        reqestParam["image"] = imageBase64String
         
         
         // [boundary 설정 : 바운더리 라인 구분 필요 위함]
@@ -156,7 +255,7 @@ class PhotoViewController : UIViewController,
         
         // [http 통신 타입 및 헤더 지정 실시]
         var requestURL = URLRequest(url: (urlComponents?.url)!) // url 주소 지정
-        requestURL.httpMethod = "POST" // POST 방식
+        requestURL.httpMethod = "POST" // POST 방식 multipart/form-data
         requestURL.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type") // 멀티 파트 타입
         
         
@@ -180,6 +279,7 @@ class PhotoViewController : UIViewController,
                 print("")
                 
                 uploadData.append(boundaryPrefix.data(using: .utf8)!)
+                // file -> image
                 uploadData.append("Content-Disposition: form-data; name=\"\(file)\"; filename=\"\(file)\"\r\n".data(using: .utf8)!) // [파라미터 key 지정]
                 uploadData.append("Content-Type: \("image/jpg")\r\n\r\n".data(using: .utf8)!) // [전체 이미지 타입 설정]
                 //uploadData.append(value as! Data) // [사진 파일 삽입]
@@ -199,7 +299,14 @@ class PhotoViewController : UIViewController,
                 
                 uploadData.append(boundaryPrefix.data(using: .utf8)!)
                 uploadData.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n".data(using: .utf8)!) // [파라미터 key 지정]
+                if (key == "image"){
+                    uploadData.append("Content-Type: \("image/jpg")\r\n\r\n".data(using: .utf8)!) // [전체 이미지 타입 설정]
+                }
                 uploadData.append("\(value)\r\n".data(using: .utf8)!) // [value 삽입]
+                if (key == "image"){
+                    uploadData.append("\r\n".data(using: .utf8)!)
+                    uploadData.append("--\(boundary)--".data(using: .utf8)!)
+                }
             }
         }
 
@@ -309,7 +416,7 @@ extension PhotoViewController: UIImagePickerControllerDelegate, UINavigationCont
     
     // MARK: [사진, 비디오 선택을 했을 때 호출되는 메소드]
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let img = info[UIImagePickerController.InfoKey.originalImage]{
+        if let img = info[UIImagePickerController.InfoKey.originalImage] as? UIImage{
             
             // [앨범에서 선택한 사진 정보 확인]
             print("")
@@ -321,11 +428,14 @@ extension PhotoViewController: UIImagePickerControllerDelegate, UINavigationCont
             
             
             // [이미지 뷰에 앨범에서 선택한 사진 표시 실시]
-            //self.imageView.image = img as? UIImage
+            //self.imageView.image = img
+
             
             
             // [이미지 데이터에 선택한 이미지 지정 실시]
-            self.imageData = (img as? UIImage)!.jpegData(compressionQuality: 0.8) as NSData? // jpeg 압축 품질 설정
+            //self.imageData = (img as? UIImage)!.jpegData(compressionQuality: 0.8) as NSData?
+            self.imageData = img.jpegData(compressionQuality: 0.8) as NSData? // jpeg 압축 품질 설정
+
             /*
             print("")
             print("===============================")
@@ -338,7 +448,7 @@ extension PhotoViewController: UIImagePickerControllerDelegate, UINavigationCont
             
             // [멀티파트 서버에 사진 업로드 수행]
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) { // [1초 후에 동작 실시]
-                self.requestPOST()
+                self.requestPOST2()
             }
         }
         // [이미지 파커 닫기 수행]
