@@ -111,7 +111,7 @@ class FhirClient {
                 return
             }
             
-            
+            // 일단 datID만 반환하므로 없앰
             guard let output = try? JSONDecoder().decode(Response.self, from: data) else {
                 //print("Request_sendData: ", sendData)
                 //print("Request_data: ", data)
@@ -124,6 +124,7 @@ class FhirClient {
                 print("Error: 중복 dataID")
                 return
             }
+            
             
             completionHandler(true, output.dataId)
         }.resume()

@@ -143,7 +143,7 @@ class PhotoViewController : UIViewController,
         }
         
         struct Response: Codable {
-            let result: String
+            let dataID: Double
         }
         
         let userName = UserDefaultsProvider.getValueFromUserDefaults(key: "userName") ?? ""
@@ -153,21 +153,23 @@ class PhotoViewController : UIViewController,
         // let dataCreatedAt -> 사진이 언제 생성되었는지 확인해야함
         // let 'extension' -> 사진의 형식을 알아내야함
         
+        let dicData = ["userName":userName, "birthDate":birthDate,"dataCreatedAt": "2022-01-01T00:00:00", "extension": "jpg", "image": imageBase64String] as Dictionary<String, Any>? // 딕셔너리 사용해 json 데이터 만든다
         
         print(userName)
         print(birthDate)
         
         
-        
-        let data = [
+        /*
+        let Data = [
             "userName": "test09",
             "birthDate": "1996-03-11",
             "dataCreatedAt": "2022-01-01T00:00:00",
             "extension": "jpg",
             "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAIIAggMBIgACEQEDEQH/xAAbAAEBAQEBAQEBAAAAAAAAAAAAAQYCBQMHBP/EAEEQAAIBAwICBAcOBAcAAAAAAAABAgMEEQUGITEHEkFREyJhcYGSoRQVFzI2UlZzkZPBwtHiM0JysSM0RHSCorL/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A/YSN9wbCXawKAAABM4YFBMcSgACN4ANhcvKRceJ0AAAAE7SgUAAQAAAAAAPM1zXdP0KjTqahVlHwjahGEetKWOfoXAD0wZH4RdA+dc/dr9R8IugfOuful+oGuD4mRfSJoC/muful+o+EXQPnXP3S/UDXAzWnb50PULuna0q1WnUqSUYOpTwnJ8llZNKAAAAAAUAAQAjTWAKAABi95JS3dthSSadZ5T/rgbQxm8It7u2y0uCqtt93jwA1tSjRjTlKNtTk0m1FQWX5DPVdYvKeh0b+O2KkrmdXqStccYrj4z8XOOHcaZc8l/ADF2u49SrXNGlU2fVhGc1GUuPipvi+MFy85sHb0M/waXqI+mfKAMT0h06dOroTp04RzerPVil2xNs+bMf0hwbnocurlK9XbxXFGwfNgAAAAOeYHYAAjCyAAAAAxm7ptbt2yuyVbD9eBszF7x+V+1/rn/7gBrL+9ttOtKl3eVFTo01mUvwS7WY+nre59xOU9AtKVlZJtRuLnnLy9vsT85d2Rlrm7NM0BykrWnHw9dReOtz/AAWP+R9d+XV9YS0W20a4dpKpUlCEabUYtrqKKfZjjy5AcTob80/NeN1aX6jxdLCy/ZH2M9bbW5qOtudtWoytNQpZ8Jbzfd2xzj7Ow83T951LS4Vhuq0lY3S4KuovqT8uO7yrK8x8d+UYWvuDdGmSi69GpFTqU2mqsHy4rn83zSA+3SDVlSnonUeHK8UW+3GY5Ni+bMT0gVY147erU/i1LuM15n1WbZ82AAAEayygAUAAQAjAoAAGL3j8r9r/AF354G0MZvD5X7Y+tb/7wA51WotM6R9Pu6/i0Ly38Cpvkpcv79T7TjpLqytrnQa6g5ulcSmoL+ZpwaXsNFuXQqGv6c7aq+pVi+tRq4+JLy96fajNUNxaxt5Rtdy6bVuadJ/4d3Rw847cvg358PvALRNd3ZUhcbhquxsoy61O1pLE/secPyvL8iPpvyNtpu2bTRLGGJV6sYUaSeXhPPp8Zpek7q9INtWXg9K0y9urh8IxcEln0ZZ9dA0DULzVVr25WvdUf8vbLGKXc2lyxngvS+IH8u+aHua221b5z4G4hT+xRX4G5fNmN6RU3V0LC/1q/KbJ88gAAAAGQKAAOW8ESzxLgoAAADH7rlFbv2314ycXVaWPndeGDYGM3g2t37Yw+HhvzwA2aWGOzAPM3Baapd2kIaPfQs6ynmU5xypRw+HJ47APSjFR+LFLzIreEZG20fd8LmlOvuGhKlGac49TPWWeK+Ka5oDHdIFTqVNFwuMrxRz3cYmxfNmM6Rv4mhf71f3ibN82AAAE7SsACgACAAAAABn91beraxUsrqxu1bXtnJunOUcrjh+xpGgAGN95N4/SSl6n7QtE3j9I6XqftNkAMb7ybx7NyU8/0ftHvJvH6SUvU/abIAYuG1Navb60qa7rMLm3tqqqxhGHFtccclzwjaAAAAAAAFAAEJxKMgAAAAOeL8wFT4lAAAACce4qCAAAACc3lkw2zpAUAACFAAAACIoAAAAAAIUAAAAIUAAAAP/Z"
         ]
+         */
         
-        let sendData = try! JSONSerialization.data(withJSONObject: data, options: [])
+        let sendData = try! JSONSerialization.data(withJSONObject: dicData, options: [])
         
         var requestURL = URLRequest(url: (urlComponents?.url)!) // url 주소 지정
         requestURL.httpMethod = "POST" // POST 방식 multipart/form-data
