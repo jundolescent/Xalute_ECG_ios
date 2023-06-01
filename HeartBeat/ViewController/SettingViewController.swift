@@ -31,7 +31,7 @@ class SettingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        serverAddress = UserDefaultsProvider.getValueFromUserDefaults(key: "serverAddress") ?? "http://34.64.114.227/data/json/Bundle"
+        serverAddress = UserDefaultsProvider.getValueFromUserDefaults(key: "serverAddress") ?? "http://api.xalute.org:8080/data/add"
         userName = UserDefaultsProvider.getValueFromUserDefaults(key: "userName") ?? ""
         birthDate = UserDefaultsProvider.getValueFromUserDefaults(key: "birthDate") ?? ""
         
@@ -47,7 +47,7 @@ class SettingViewController: UIViewController {
             UserDefaultsProvider.setValueInUserDefaults(key: "serverAddress", value: str)
         }
         else {
-            UserDefaultsProvider.setValueInUserDefaults(key: "serverAddress", value: "http://34.64.114.227/data/json/Bundle")
+            UserDefaultsProvider.setValueInUserDefaults(key: "serverAddress", value: "http://api.xalute.org:8080/data/add")
         }
     }
     

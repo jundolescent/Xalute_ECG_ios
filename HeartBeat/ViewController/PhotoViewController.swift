@@ -153,7 +153,7 @@ class PhotoViewController : UIViewController,
         // let dataCreatedAt -> 사진이 언제 생성되었는지 확인해야함
         // let 'extension' -> 사진의 형식을 알아내야함
         
-        let dicData = ["userName":userName, "birthDate":birthDate,"dataCreatedAt": "2022-01-01T00:00:00", "extension": "jpg", "image": imageBase64String] as Dictionary<String, Any>? // 딕셔너리 사용해 json 데이터 만든다
+        let dicData = ["userName":userName, "birthDate":birthDate,"dataCreatedAt": "2022-01-01 00:00", "extension": "jpg", "image": imageBase64String] as Dictionary<String, Any>? // 딕셔너리 사용해 json 데이터 만든다
         
         print(userName)
         print(birthDate)
