@@ -60,8 +60,16 @@ class PhotoViewController : UIViewController,
           
     }
     
+    func showAlertMessage(title: String, message:String) {
+        DispatchQueue.main.async {
+            let alertMessage = UIAlertController(title: "", message: message, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "Ok", style: .cancel)
+            
+            alertMessage.addAction(okAction)
+            self.present(alertMessage, animated: true, completion: nil)
+        }
+    }
     
-
     
     @IBAction func addPhotoAssets(_ sender: Any) {
         let alert = UIAlertController(title: "Get food pictures from:", message: nil, preferredStyle: .actionSheet)
@@ -182,10 +190,12 @@ class PhotoViewController : UIViewController,
             guard error == nil else {
                 print("Error: error calling POST")
                 print(error!)
+                self.showAlertMessage (title: "", message: "이미지 데이터 전송 실패")
                 return
             }
             guard let data = data else {
                 print("Error: Did not receive data")
+                self.showAlertMessage (title: "", message: "이미지 데이터 전송 실패")
                 return
             }
 
@@ -194,6 +204,7 @@ class PhotoViewController : UIViewController,
             
             guard let response = response as? HTTPURLResponse, (200 ..< 300) ~= response.statusCode else {
                 print("Error: HTTP request failed")
+                self.showAlertMessage (title: "", message: "이미지 데이터 전송 실패")
                 return
             }
             
@@ -206,6 +217,7 @@ class PhotoViewController : UIViewController,
                 return
             }
             */
+            self.showAlertMessage (title: "", message: "이미지 데이터 전송 완료!")
              
              
 
@@ -452,6 +464,7 @@ extension PhotoViewController: UIImagePickerControllerDelegate, UINavigationCont
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) { // [1초 후에 동작 실시]
                 self.requestPOST2()
             }
+
         }
         // [이미지 파커 닫기 수행]
         dismiss(animated: true, completion: nil)
