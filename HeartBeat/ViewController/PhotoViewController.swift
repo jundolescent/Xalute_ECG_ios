@@ -21,37 +21,136 @@ class PhotoViewController : UIViewController,
     let photo = UIImagePickerController() // 앨범 이동을 위한 컨트롤러
     var imageData : NSData? = nil // 서버로 이미지 등록을 하기 위함
     
+    let columns: CGFloat = 3
+    let space: CGFloat = 1
+    let images = ["a.png", "a.png","a.png"]
+    var downloadedImages: [UIImage] = []
+       
+    
+    
+    //서버에 저장된 이미지 셀 형태로 반환
+    var dataSource: [AnyObject] = []
+    var session: URLSession = URLSession.shared
+    lazy var cache: NSCache<AnyObject, UIImage> = NSCache()
+
+    
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-       return 2
+        return self.images.count
     }
 
     
-     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as?
-                 UICollectionViewCell else {
-                return UICollectionViewCell()
-            }
-         
-            return cell
-     }
-     
-    /*
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CustomCollectionCell.identifier, for: indexPath) as! CustomCollectionCell
+         
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photocell", for: indexPath)  as! photocell
 
-        //cell.imageView.image = UIImage(named: imageData.self)
-        return cell
-    }
-     */
-     
-
+        //cell.Image.image = UIImage(named: images[indexPath.row])
+        let dicData = ["user":["name":"이준석23", "birthday":"19960310"]] as Dictionary<String, Any>? // 딕셔너리 사용해 json 데이터 만든다
+        print("여기까지")
+        let sendData = try! JSONSerialization.data(withJSONObject: dicData, options: [])
+        var urlComponents = URLComponents(string:"http://api.xalute.org:8080/data/getimage")
+        var requestURL = URLRequest(url: (urlComponents?.url)!)
+        requestURL.httpMethod = "POST" // GET
+        requestURL.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        requestURL.httpBody = sendData
     
+        struct Request: Codable {
+            let Birthday: String
+            let CreatedAt: String
+            let Data: String
+            let DataCreatedAt: String
+            let DataType: String
+            let ID: String
+            let Name: String
+        }
+        
+        
+        
+        URLSession.shared.dataTask(with: requestURL) { (data, response, error) in
+            
+            guard error == nil else {
+                print("Error: error calling GET")
+                print(error!)
+                self.showAlertMessage (title: "", message: "이미지 데이터 전송 실패")
+                return
+            }
+            guard let data = data else {
+                print("Error: Did not receive data")
+                self.showAlertMessage (title: "", message: "이미지 데이터 전송 실패")
+                return
+            }
+
+            // Failed to upload image일 경우 이미지가 업로드되지 않은 것임
+            print(String(data: data, encoding: .utf8)!)
+            
+            guard let response = response as? HTTPURLResponse, (200 ..< 300) ~= response.statusCode else {
+                print("Error: HTTP request failed")
+                self.showAlertMessage (title: "", message: "이미지 데이터 전송 실패")
+                return
+            }
+            print("과연")
+            // 여기부터 다시 진행하기!
+            if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
+                print("과연2")
+              if let name = json["Data"] as? String {
+                print(name) // hyeon
+              }
+            }
+
+        }.resume()
+        
+        
+        
+        
+        let url = URL(string: "https://storage.googleapis.com/xalute_data/image_%EC%9D%B4%EC%A4%80%EC%84%9D23_2023-06-02_17:14:01.jpg")
+        
+        var request = URLRequest(url: url!)
+        request.httpMethod = "GET"
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            guard
+                let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 200,
+                let mimeType = response?.mimeType, mimeType.hasPrefix("image"),
+                let data = data, error == nil,
+                let image = UIImage(data: data)
+                else {
+                    print("Download image fail : \(url)")
+                    return
+            }
+
+            DispatchQueue.main.async() {[weak self] in
+                print("Download image success \(url)")
+
+                //self?.imageView.image = image
+                cell.Image.image = image
+            }
+        }.resume()
+
+        
+        return cell
+     }
+    
+    //셀 크기
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = (collectionView.frame.width / columns) - (space * (columns - 1))
+        return CGSize(width: width, height: width)
+    }
+
+    //위아래 간격
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return space
+    }
+
+    //좌우 간격
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return space
+    }
+    
+     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.photo.delegate = self
-        
       
     }
     
@@ -147,7 +246,6 @@ class PhotoViewController : UIViewController,
             let dataCreatedAt: String
             let `extension`: String
             let image: String
-
         }
         
         struct Response: Codable {
@@ -218,206 +316,10 @@ class PhotoViewController : UIViewController,
             }
             */
             self.showAlertMessage (title: "", message: "이미지 데이터 전송 완료!")
-             
-             
 
         }.resume()
-        
     }
     
-    // MARK: - [URL Session Post 멀티 파트 사진 데이터 업로드]
-    func requestPOST() {
-        
-        // jsl URL 수정해야함!
-        // MARK: [URL 지정 실시]
-        let urlComponents = URLComponents(string: "http://34.121.35.61:8080/api/addNewImage")
-        
-        
-        
-        // MARK: [사진 파일 파라미터 이름 정의 실시]
-        let file = "file"
-        
-        
-        // MARK: [전송할 데이터 파라미터 정의 실시]
-        var reqestParam : Dictionary<String, Any> = [String : Any]()
-        //reqestParam["idx"] = 201 // 일반 파라미터
-        //jsl for test
-        reqestParam["userName"] = "junseok"
-        reqestParam["birthDate"] = "19960310"
-        reqestParam["dataCreatedAt"] = "2023-05-10"
-        reqestParam["extenstion"] = "jpg"
-        
-        let imageBase64String = imageData?.base64EncodedString()
-        //reqestParam["\(file)"] = self.imageData! as NSData // 사진 파일
-        //reqestParam["\(file)"] = imageBase64String
-        
-        //jsl -> 0523 수정
-        reqestParam["image"] = imageBase64String
-        
-        
-        // [boundary 설정 : 바운더리 라인 구분 필요 위함]
-        let boundary = "Boundary-\(UUID().uuidString)" // 고유값 지정
-        
-        print("")
-        print("====================================")
-        print("[A_Image >> requestPOST() :: 바운더리 라인 구분 확인 실시]")
-        print("boundary :: ", boundary)
-        print("====================================")
-        print("")
-        
-        
-        
-        // [http 통신 타입 및 헤더 지정 실시]
-        var requestURL = URLRequest(url: (urlComponents?.url)!) // url 주소 지정
-        requestURL.httpMethod = "POST" // POST 방식 multipart/form-data
-        requestURL.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type") // 멀티 파트 타입
-        
-        
-        
-        // [서버로 전송할 uploadData 데이터 형식 설정]
-        var uploadData = Data()
-        let boundaryPrefix = "--\(boundary)\r\n"
-        
-        
-        
-        // [멀티 파트 전송 파라미터 삽입 : 딕셔너리 for 문 수행]
-        for (key, value) in reqestParam {
-            if "\(key)" == "\(file)" { // MARK: [사진 파일 인 경우]
-                print("")
-                print("====================================")
-                print("[A_Image >> requestPOST() :: 멀티 파트 전송 파라미터 확인 실시]")
-                print("타입 :: ", "사진 파일")
-                print("key :: ", key)
-                print("value :: ", value)
-                print("====================================")
-                print("")
-                
-                uploadData.append(boundaryPrefix.data(using: .utf8)!)
-                // file -> image
-                uploadData.append("Content-Disposition: form-data; name=\"\(file)\"; filename=\"\(file)\"\r\n".data(using: .utf8)!) // [파라미터 key 지정]
-                uploadData.append("Content-Type: \("image/jpg")\r\n\r\n".data(using: .utf8)!) // [전체 이미지 타입 설정]
-                //uploadData.append(value as! Data) // [사진 파일 삽입]
-                uploadData.append("\(value)\r\n".data(using: .utf8)!) // [value 삽입]
-                uploadData.append("\r\n".data(using: .utf8)!)
-                uploadData.append("--\(boundary)--".data(using: .utf8)!)
-            }
-            else { // MARK: [일반 파라미터인 경우]
-                print("")
-                print("====================================")
-                print("[A_Image >> requestPOST() :: 멀티 파트 전송 파라미터 확인 실시]")
-                print("타입 :: ", "일반 파라미터")
-                print("key :: ", key)
-                print("value :: ", value)
-                print("====================================")
-                print("")
-                
-                uploadData.append(boundaryPrefix.data(using: .utf8)!)
-                uploadData.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n".data(using: .utf8)!) // [파라미터 key 지정]
-                if (key == "image"){
-                    uploadData.append("Content-Type: \("image/jpg")\r\n\r\n".data(using: .utf8)!) // [전체 이미지 타입 설정]
-                }
-                uploadData.append("\(value)\r\n".data(using: .utf8)!) // [value 삽입]
-                if (key == "image"){
-                    uploadData.append("\r\n".data(using: .utf8)!)
-                    uploadData.append("--\(boundary)--".data(using: .utf8)!)
-                }
-            }
-        }
-
-        
-        
-        // [http 요쳥을 위한 URLSessionDataTask 생성]
-        print("")
-        print("====================================")
-        print("[A_Image >> requestPOST() :: 사진 업로드 요청 실시]")
-        print("url :: ", requestURL)
-        print("uploadData :: ", uploadData)
-        print("====================================")
-        print("")
-        
-        // MARK: [URLSession uploadTask 수행 실시]
-        let dataTask = URLSession(configuration: .default)
-        dataTask.configuration.timeoutIntervalForRequest = TimeInterval(20)
-        dataTask.configuration.timeoutIntervalForResource = TimeInterval(20)
-        dataTask.uploadTask(with: requestURL, from: uploadData) { (data: Data?, response: URLResponse?, error: Error?) in
-
-            // [error가 존재하면 종료]
-            guard error == nil else {
-                print("")
-                print("====================================")
-                print("[A_Image >> requestPOST() :: 사진 업로드 요청 실패]")
-                print("fail : ", error?.localizedDescription ?? "")
-                print("====================================")
-                print("")
-                return
-            }
-
-            // [status 코드 체크 실시]
-            let successsRange = 200..<300
-            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, successsRange.contains(statusCode)
-            else {
-                print("")
-                print("====================================")
-                print("[A_Image >> requestPOST() :: 사진 업로드 요청 에러]")
-                print("error : ", (response as? HTTPURLResponse)?.statusCode ?? 0)
-                print("allHeaderFields : ", (response as? HTTPURLResponse)?.allHeaderFields ?? "")
-                print("msg : ", (response as? HTTPURLResponse)?.description ?? "")
-                print("====================================")
-                print("")
-                return
-            }
-
-            // [response 데이터 획득, json 형태로 변환]
-            let resultCode = (response as? HTTPURLResponse)?.statusCode ?? 0
-            let resultLen = data! // 데이터 길이
-            do {
-                guard let jsonConvert = try JSONSerialization.jsonObject(with: data!) as? [String: Any] else {
-                    print("")
-                    print("====================================")
-                    print("[A_Image >> requestPOST() :: 사진 업로드 요청 에러]")
-                    print("error : ", "json 형식 데이터 convert 에러")
-                    print("====================================")
-                    print("")
-                    return
-                }
-                guard let JsonResponse = try? JSONSerialization.data(withJSONObject: jsonConvert, options: .prettyPrinted) else {
-                    print("")
-                    print("====================================")
-                    print("[A_Image >> requestPOST() :: 사진 업로드 요청 에러]")
-                    print("error : ", "json 형식 데이터 변환 에러")
-                    print("====================================")
-                    print("")
-                    return
-                }
-                guard let resultString = String(data: JsonResponse, encoding: .utf8) else {
-                    print("")
-                    print("====================================")
-                    print("[A_Image >> requestPOST() :: 사진 업로드 요청 에러]")
-                    print("error : ", "json 형식 데이터 >> String 변환 에러")
-                    print("====================================")
-                    print("")
-                    return
-                }
-                print("")
-                print("====================================")
-                print("[A_Image >> requestPOST() :: 사진 업로드 요청 성공]")
-                print("allHeaderFields : ", (response as? HTTPURLResponse)?.allHeaderFields ?? "")
-                print("resultCode : ", resultCode)
-                print("resultLen : ", resultLen)
-                print("resultString : ", resultString)
-                print("====================================")
-                print("")
-            } catch {
-                print("")
-                print("====================================")
-                print("[A_Image >> requestPOST() :: 사진 업로드 요청 에러]")
-                print("error : ", "Trying to convert JSON data to string")
-                print("====================================")
-                print("")
-                return
-            }
-        }.resume()
-    }
     
 
     
@@ -447,17 +349,8 @@ extension PhotoViewController: UIImagePickerControllerDelegate, UINavigationCont
             
             
             // [이미지 데이터에 선택한 이미지 지정 실시]
-            //self.imageData = (img as? UIImage)!.jpegData(compressionQuality: 0.8) as NSData?
             self.imageData = img.jpegData(compressionQuality: 0.8) as NSData? // jpeg 압축 품질 설정
 
-            /*
-            print("")
-            print("===============================")
-            print("[A_Image >> imagePickerController() :: 앨범에서 선택한 사진 정보 확인 및 사진 표시 실시]")
-            print("[imageData :: ", self.imageData)
-            print("===============================")
-            print("")
-            // */
             
             
             // [멀티파트 서버에 사진 업로드 수행]
@@ -484,3 +377,8 @@ extension PhotoViewController: UIImagePickerControllerDelegate, UINavigationCont
         self.dismiss(animated: true, completion: nil)
     }
 }
+
+
+
+
+
