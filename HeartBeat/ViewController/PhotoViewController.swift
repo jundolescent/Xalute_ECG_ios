@@ -17,26 +17,25 @@ class PhotoViewController : UIViewController,
     
     //jsl
     // MARK: - [전역 변수 선언 실시]
+
+    @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var imageView: UIImageView! // 이미지 뷰
     let photo = UIImagePickerController() // 앨범 이동을 위한 컨트롤러
     var imageData : NSData? = nil // 서버로 이미지 등록을 하기 위함
     
     let columns: CGFloat = 3
     let space: CGFloat = 1
-    let images = ["a.png", "a.png","a.png"]
-    var downloadedImages: [UIImage] = []
-       
+
+    var images = [String]()
+    var images2 = [UIImage]()
     
-    
-    //서버에 저장된 이미지 셀 형태로 반환
-    var dataSource: [AnyObject] = []
-    var session: URLSession = URLSession.shared
-    lazy var cache: NSCache<AnyObject, UIImage> = NSCache()
+    //refresh 기능만 만들면
 
     
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.images.count
+        return self.images2.count
+        //return 12
     }
 
     
@@ -44,88 +43,20 @@ class PhotoViewController : UIViewController,
          
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photocell", for: indexPath)  as! photocell
 
-        //cell.Image.image = UIImage(named: images[indexPath.row])
-        let dicData = ["user":["name":"이준석23", "birthday":"19960310"]] as Dictionary<String, Any>? // 딕셔너리 사용해 json 데이터 만든다
-        print("여기까지")
-        let sendData = try! JSONSerialization.data(withJSONObject: dicData, options: [])
-        var urlComponents = URLComponents(string:"http://api.xalute.org:8080/data/getimage")
-        var requestURL = URLRequest(url: (urlComponents?.url)!)
-        requestURL.httpMethod = "POST" // GET
-        requestURL.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        requestURL.httpBody = sendData
-    
-        struct Request: Codable {
-            let Birthday: String
-            let CreatedAt: String
-            let Data: String
-            let DataCreatedAt: String
-            let DataType: String
-            let ID: String
-            let Name: String
+ 
+        //print(self.images2.count)
+        DispatchQueue.main.async() {
+
+            
         }
-        
-        
-        
-        URLSession.shared.dataTask(with: requestURL) { (data, response, error) in
-            
-            guard error == nil else {
-                print("Error: error calling GET")
-                print(error!)
-                self.showAlertMessage (title: "", message: "이미지 데이터 전송 실패")
-                return
-            }
-            guard let data = data else {
-                print("Error: Did not receive data")
-                self.showAlertMessage (title: "", message: "이미지 데이터 전송 실패")
-                return
-            }
+        cell.Image.image = self.images2[indexPath.item]
 
-            // Failed to upload image일 경우 이미지가 업로드되지 않은 것임
-            print(String(data: data, encoding: .utf8)!)
-            
-            guard let response = response as? HTTPURLResponse, (200 ..< 300) ~= response.statusCode else {
-                print("Error: HTTP request failed")
-                self.showAlertMessage (title: "", message: "이미지 데이터 전송 실패")
-                return
-            }
-            print("과연")
-            // 여기부터 다시 진행하기!
-            if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
-                print("과연2")
-              if let name = json["Data"] as? String {
-                print(name) // hyeon
-              }
-            }
-
-        }.resume()
-        
-        
-        
-        
-        let url = URL(string: "https://storage.googleapis.com/xalute_data/image_%EC%9D%B4%EC%A4%80%EC%84%9D23_2023-06-02_17:14:01.jpg")
-        
-        var request = URLRequest(url: url!)
-        request.httpMethod = "GET"
-
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            guard
-                let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 200,
-                let mimeType = response?.mimeType, mimeType.hasPrefix("image"),
-                let data = data, error == nil,
-                let image = UIImage(data: data)
-                else {
-                    print("Download image fail : \(url)")
-                    return
-            }
-
-            DispatchQueue.main.async() {[weak self] in
-                print("Download image success \(url)")
-
-                //self?.imageView.image = image
-                cell.Image.image = image
-            }
-        }.resume()
-
+        let itemSize = CGSize(width:42.0, height:42.0)
+        UIGraphicsBeginImageContextWithOptions(itemSize, false, 0.0)
+        let imageRect = CGRect(x:0.0, y:0.0, width:itemSize.width, height:itemSize.height)
+        cell.Image.image!.draw(in:imageRect)
+        cell.Image.image! = UIGraphicsGetImageFromCurrentImageContext()!
+            UIGraphicsEndImageContext()
         
         return cell
      }
@@ -151,6 +82,96 @@ class PhotoViewController : UIViewController,
     override func viewDidLoad() {
         super.viewDidLoad()
         self.photo.delegate = self
+        //cell.Image.image = UIImage(named: images[indexPath.row])
+        let userName = UserDefaultsProvider.getValueFromUserDefaults(key: "userName") ?? ""
+        let birthDate = UserDefaultsProvider.getValueFromUserDefaults(key: "birthDate") ?? ""
+        //cell당 하나씩 해야함! -> 이건 하나의 셀에서 다 욱여넣는 방시인듯
+        //print(self.images2.count)
+        //print(indexPath.item)
+        let dicData = ["user":["name":userName, "birthday":birthDate]] as Dictionary<String, Any>? // 딕셔너리 사용해 json 데이터 만든다
+        let sendData = try! JSONSerialization.data(withJSONObject: dicData, options: [])
+        var urlComponents = URLComponents(string:"http://api.xalute.org:8080/data/getimage")
+        var requestURL = URLRequest(url: (urlComponents?.url)!)
+        requestURL.httpMethod = "POST" // GET
+        requestURL.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        requestURL.httpBody = sendData
+    
+
+        URLSession.shared.dataTask(with: requestURL) { (data, response, error) in
+            
+            guard error == nil else {
+                print("Error: error calling GET")
+                print(error!)
+                self.showAlertMessage (title: "", message: "이미지 데이터 전송 실패")
+                return
+            }
+            guard let data = data else {
+                print("Error: Did not receive data")
+                self.showAlertMessage (title: "", message: "이미지 데이터 전송 실패")
+                return
+            }
+
+            //print(String(data: data, encoding: .utf8)!)
+            
+            guard let response = response as? HTTPURLResponse, (200 ..< 300) ~= response.statusCode else {
+                print("Error: HTTP request failed")
+                self.showAlertMessage (title: "", message: "이미지 데이터 전송 실패")
+                return
+            }
+
+            // 여기부터 다시 진행하기!
+            var nameArr = [String]()
+            if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [[String : String]] {
+
+                for i in json{
+                    //print(i["Data"] as! String)
+                    nameArr.append(i["Data"] as! String)
+                    if self.images.contains(i["Data"] as! String) == false {
+                        self.images.append(i["Data"] as! String)
+                        //print(i["Data"] as! String)
+                        //print("hello")
+                        //영어로만 이루어져있을 경우에는 아래와 같이 전송 한글 방식으로 전송하면 안 받아짐,,
+                        //let url = URL(string: "https://storage.googleapis.com/xalute_data/image_%EC%9D%B4%EC%A4%80%EC%84%9D23_2023-06-02_17:14:01.jpg")
+                        //        var request = URLRequest(url: url)!
+                        
+                        //한글을 포함하고 있을 경우에는 아래와 같이
+                        let url = i["Data"] as! String
+                        //let url = "https://storage.googleapis.com/xalute_data/image_%EC%9D%B4%EC%A4%80%EC%84%9D23_2023-06-02_17:14:01.jpg"
+                        
+                        let url2 = url.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+                        let url3 = URL(string: url2)!
+                        //let url = URL(string: urladd)
+                        //한글 포함 주소 변환해야함
+                        var request = URLRequest(url: url3)
+                        request.httpMethod = "GET"
+
+                        URLSession.shared.dataTask(with: request) { data, response, error in
+                            guard
+                                let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 200,
+                                let mimeType = response?.mimeType, mimeType.hasPrefix("image"),
+                                let data = data, error == nil,
+                                let image = UIImage(data: data)
+                                else {
+                                    print("Download image fail : \(url)")
+                                    return
+                            }
+                            self.images2.append(image)
+                            print(self.images2.count)
+  
+                            DispatchQueue.main.async() {
+                                print("Download image success \(url)")
+                                self.collectionView.reloadData()
+                                //cell.Image.image = image
+                                //self?.imageView.image = image
+                                //self.collectionView.
+
+                            }
+                        }.resume()
+                    }
+                }
+            }
+
+        }.resume()
       
     }
     
@@ -255,11 +276,15 @@ class PhotoViewController : UIViewController,
         let userName = UserDefaultsProvider.getValueFromUserDefaults(key: "userName") ?? ""
         let birthDate = UserDefaultsProvider.getValueFromUserDefaults(key: "birthDate") ?? ""
         
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        let time = formatter.string(from: Date())
+        
         // To-Do List
         // let dataCreatedAt -> 사진이 언제 생성되었는지 확인해야함
         // let 'extension' -> 사진의 형식을 알아내야함
         
-        let dicData = ["userName":userName, "birthDate":birthDate,"dataCreatedAt": "2022-01-01 00:00", "extension": "jpg", "image": imageBase64String] as Dictionary<String, Any>? // 딕셔너리 사용해 json 데이터 만든다
+        let dicData = ["userName":userName, "birthDate":birthDate,"dataCreatedAt": time, "extension": "jpg", "image": imageBase64String] as Dictionary<String, Any>? // 딕셔너리 사용해 json 데이터 만든다
         
         print(userName)
         print(birthDate)

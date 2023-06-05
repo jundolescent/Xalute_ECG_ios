@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		686723F02A2A4835009E5304 /* a.png in Resources */ = {isa = PBXBuildFile; fileRef = 686723EF2A2A4835009E5304 /* a.png */; };
 		68FA06EE2A287D9A00449AD3 /* photocell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68FA06ED2A287D9A00449AD3 /* photocell.swift */; };
-		68FCE5542A29D83E0080A915 /* a.png in Resources */ = {isa = PBXBuildFile; fileRef = 68FCE5532A29D83E0080A915 /* a.png */; };
 		A35DC7933E3CC42C12DF6CED /* Pods_HeartBeat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBE073601B0A773FAF247BC5 /* Pods_HeartBeat.framework */; };
 		C10166EA283CE6290098E5B6 /* HeartDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10166E9283CE6290098E5B6 /* HeartDetailViewController.swift */; };
 		C10166ED283D37260098E5B6 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = C10166EB283D37250098E5B6 /* Localizable.stringsdict */; };
@@ -79,8 +79,8 @@
 /* Begin PBXFileReference section */
 		2576615C1712B28A5BD51606 /* Pods-HeartBeat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeartBeat.release.xcconfig"; path = "Target Support Files/Pods-HeartBeat/Pods-HeartBeat.release.xcconfig"; sourceTree = "<group>"; };
 		334F7C38A628B9B6B66F1A62 /* Pods-HeartBeat.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeartBeat.debug.xcconfig"; path = "Target Support Files/Pods-HeartBeat/Pods-HeartBeat.debug.xcconfig"; sourceTree = "<group>"; };
+		686723EF2A2A4835009E5304 /* a.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = a.png; path = ../../../../Downloads/a.png; sourceTree = "<group>"; };
 		68FA06ED2A287D9A00449AD3 /* photocell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = photocell.swift; sourceTree = "<group>"; };
-		68FCE5532A29D83E0080A915 /* a.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = a.png; path = ../../../../../Downloads/a.png; sourceTree = "<group>"; };
 		C10166E9283CE6290098E5B6 /* HeartDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartDetailViewController.swift; sourceTree = "<group>"; };
 		C10166EC283D37250098E5B6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		C11C9CAD283267FD00641809 /* HealthData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthData.swift; sourceTree = "<group>"; };
@@ -190,7 +190,7 @@
 		C1029DA0283DD64200EA04C6 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
-				68FCE5532A29D83E0080A915 /* a.png */,
+				686723EF2A2A4835009E5304 /* a.png */,
 				C1B72B81291C913500A7788A /* SettingViewController.swift */,
 				C1322C2728793E9A0006C79E /* AlbumsTableViewController.swift */,
 				C152446B2817A06900498862 /* ViewController.swift */,
@@ -433,7 +433,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C15244772817A06C00498862 /* LaunchScreen.storyboard in Resources */,
-				68FCE5542A29D83E0080A915 /* a.png in Resources */,
+				686723F02A2A4835009E5304 /* a.png in Resources */,
 				C10166ED283D37260098E5B6 /* Localizable.stringsdict in Resources */,
 				C1A627482851BBDF00674766 /* FhirECG.json in Resources */,
 				C15244742817A06C00498862 /* Assets.xcassets in Resources */,
