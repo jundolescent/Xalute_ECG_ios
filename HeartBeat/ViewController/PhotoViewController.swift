@@ -77,7 +77,6 @@ class PhotoViewController : UIViewController,
         return space
     }
     
-     
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -124,7 +123,7 @@ class PhotoViewController : UIViewController,
             if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [[String : String]] {
 
                 for i in json{
-                    //print(i["Data"] as! String)
+                    print(i["Data"] as! String)
                     nameArr.append(i["Data"] as! String)
                     if self.images.contains(i["Data"] as! String) == false {
                         self.images.append(i["Data"] as! String)
@@ -374,7 +373,7 @@ extension PhotoViewController: UIImagePickerControllerDelegate, UINavigationCont
             
             
             // [이미지 데이터에 선택한 이미지 지정 실시]
-            self.imageData = img.jpegData(compressionQuality: 0.8) as NSData? // jpeg 압축 품질 설정
+            self.imageData = img.jpegData(compressionQuality: 0.7) as NSData? // jpeg 압축 품질 설정
 
             
             
