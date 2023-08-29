@@ -11,6 +11,8 @@ import Foundation
 import SMART
 import FHIR
 
+//0829
+import WebKit
 
 
 class FhirClient {
@@ -21,6 +23,24 @@ class FhirClient {
     }
     
     //jsl
+    var WKwebView: WKWebView!
+    
+    
+    func getUserAgent() {
+
+              let webConfiguration = WKWebViewConfiguration()
+       WKwebView = WKWebView(frame: .zero, configuration: webConfiguration)
+             WKwebView.evaluateJavaScript("navigator.userAgent", completionHandler: { (result, error) in
+                  debugPrint(result as Any)
+                  debugPrint(error as Any)
+
+                  if let unwrappedUserAgent = result as? String {
+                      print("userAgent: \(unwrappedUserAgent)")
+                  } else {
+                      print("failed to get the user agent")
+                  }
+              })
+    }
 
     
     func send(resource: Resource, closure: @escaping (Bool) -> Void) {
@@ -86,7 +106,10 @@ class FhirClient {
         request.httpMethod = method
         request.httpBody = sendData
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Mozilla/5.0 Apple", forHTTPHeaderField: "User-Agent")
         
+        //getUserAgent()
+        print ("hello: ", request.allHTTPHeaderFields )
         print ("SendData : ", sendData)
         print ("SendData count : ", sendData.count )
         
